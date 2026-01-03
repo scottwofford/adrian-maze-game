@@ -1,5 +1,34 @@
 # Email: How to Continue Working on Adrian's Game Remotely
 
+## ✅ vFinal - Email Sent 2026-01-03
+
+```
+Hey Luis!
+
+I put together guides so you and Adrian can keep working on the game from NYC. Everything's here:
+👉 https://github.com/scottwofford/adrian-maze-game/tree/main/learning
+
+Start with doc #2 (Getting Started) - it walks through setup step by step.
+Easiest option: Just play the game and write down ideas.
+Want help setting up? lmk and we'll do a quick call.
+
+— Scott
+
+---
+¡Hola Luis!
+
+Hice guías para que tú y Adrian puedan seguir trabajando en el juego desde NYC. Todo está aquí:
+👉 https://github.com/scottwofford/adrian-maze-game/tree/main/learning
+Empieza con el documento #2 (Getting Started).
+¿Necesitas ayuda? Mándame un mensaje y hacemos una videollamada.
+
+— Escott
+```
+
+---
+
+# v1 - Original Long Version (Reference)
+
 **To:** Luis & Adrian
 **From:** Scott
 **Subject:** How to keep building Adrian's Maze Game from NYC! / Cómo seguir construyendo el juego desde NYC!
