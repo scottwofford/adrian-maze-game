@@ -157,6 +157,7 @@ Adrian puede decir cosas como:
 | **Play the game** | Run `python3 -m http.server 8080` then open http://localhost:8080 |
 | **Getting Started Guide** | [02_GETTING_STARTED.md](./02_GETTING_STARTED.md) |
 | **README (all decisions)** | [../README.md](../README.md) |
+| **Full Conversation Log** | [../dev/context/prompts_and_replies/conversation_log.csv](../dev/context/prompts_and_replies/conversation_log.csv) |
 
 ---
 
