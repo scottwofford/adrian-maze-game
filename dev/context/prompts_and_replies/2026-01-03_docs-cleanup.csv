@@ -1,0 +1,10 @@
+logged_by_luthien,created_at,prompt_or_response,comments,content
+N,2026-01-03 09:00:00+00,PROMPT,session resumed,"(Session resumed after context limit - continuing from Jan 2)"
+N,2026-01-03 09:05:00+00,RESPONSE,,"Completed adding navigation links to all learning docs. Committed and pushed cleanup changes."
+N,2026-01-03 09:10:00+00,PROMPT,email and logging,"Queue email in Gmail, ensure Luthien logs captured, move CSV to repo in dev/context/prompts_and_replies"
+N,2026-01-03 09:15:00+00,RESPONSE,,"Moved CSV to repo. Updated with recent entries. Explained Gmail schedule send."
+N,2026-01-03 09:20:00+00,PROMPT,Luthien onboarding,"Add Luthien onboarding to /learning folder. Offer setup call in email."
+N,2026-01-03 09:25:00+00,RESPONSE,,"Created 06_OPTIONAL_LUTHIEN_SETUP.md. Updated email with 30-min setup call offer."
+N,2026-01-03 09:30:00+00,PROMPT,check older logs,"CSV only has Jan 2 data. Check Luthien for older logs."
+N,2026-01-03 09:35:00+00,RESPONSE,found full history,"Found Adrian session spans Dec 29 - Jan 2 (337 events). Creating separate CSV per day."
+N,2026-01-03 09:40:00+00,RESPONSE,files created,"Created: 2025-12-29_family-testing.csv, 2026-01-01_game-creation.csv, renamed Jan 2 file"
