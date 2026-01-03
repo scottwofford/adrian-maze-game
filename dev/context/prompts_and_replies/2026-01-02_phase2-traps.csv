@@ -1,4 +1,4 @@
-﻿logged_by_luthien,created_at,prompt_or_response,comments,content
+logged_by_luthien,created_at,prompt_or_response,comments,content
 N,2026-01-02 00:10:00+00,PROMPT,session start,"I'd like to get luthien running in this repo - see instructions in /build/cheatsheet.md"
 N,2026-01-02 00:10:30+00,RESPONSE,,"Started Luthien proxy services via quick_start.sh. Gateway healthy. User needs to exit and relaunch Claude Code through the proxy."
 N,2026-01-02 00:15:00+00,PROMPT,resumed via luthien,"cd /Users/scottwofford/build/luthien-proxy && claude --resume 82cc8674-3199-411c-adc7-0f1be75f325d"
@@ -45,9 +45,3 @@ N,2026-01-02 01:00:00+00,PROMPT,cleanup request,"Also, please cleanup the repo. 
 N,2026-01-02 01:05:00+00,RESPONSE,,"Created /learning folder. Moved docs there. Created GETTING_STARTED.md for beginners. Archived old feedback file."
 N,2026-01-02 01:10:00+00,PROMPT,numbering request,"in /learning please rename files so they go in order. 1 should be email, 2 getting started, etc. and the documents should make sense when read exactly in that order"
 N,2026-01-02 01:15:00+00,RESPONSE,,"Renamed files: 01_EMAIL_FOR_LUIS, 02_GETTING_STARTED, 03_HOW_TO_RUN, 04_PROJECT_STRUCTURE, 05_TREE_EXPLANATION_FOR_ADRIAN. Added navigation links between all docs."
-N,2026-01-03 09:00:00+00,PROMPT,session resumed,"(Session resumed after context limit)"
-N,2026-01-03 09:05:00+00,RESPONSE,,"Completed adding navigation links to all learning docs. Committed and pushed cleanup changes."
-N,2026-01-03 09:10:00+00,PROMPT,email and logging,"also, I use gmail, is there an easy way to queue up an email. also in email I want to include instructions. also I see you're compacting the conversation, make sure that everything's still being captured in Luthien logs (full) and csv is updated. Also move csv to this repo so I can link to it in my email. perhaps add to dev/context/prompts_and_replies"
-N,2026-01-03 09:15:00+00,RESPONSE,,"Moved CSV to dev/context/prompts_and_replies/conversation_log.csv. Updated with recent entries. Explaining Gmail schedule send feature."
-N,2026-01-03 09:20:00+00,PROMPT,Luthien onboarding,"where in /learning should I add how to onboard to Luthien. In email, offer a call to help him get setup"
-N,2026-01-03 09:25:00+00,RESPONSE,,"Created 06_OPTIONAL_LUTHIEN_SETUP.md with Docker/proxy setup instructions. Updated email to offer 30-min setup call. Added Luthien doc to navigation."
