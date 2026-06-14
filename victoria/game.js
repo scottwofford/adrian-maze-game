@@ -1,228 +1,205 @@
 // El Videojuego de Victoria / Victoria's Video Game
 // Diseñado por / Designed by: Victoria
-// Estilo / Style: Unicornio mágico vs. dragón / Magical unicorn vs. dragon
+// Estilo / Style: Unicornio mágico volador que protege casas / Flying magical unicorn that protects houses
 //
-// Visión de Victoria: montas un unicornio mágico que salta, con alguien encima,
-// viajando por todo el mundo (selva, castillo, bosque, nubes). Un dragón malo te
-// persigue y trata de comerte; controlas al unicornio para escapar y atacar con lo
-// mágico. Dos jugadores: el otro lado son dos que trabajan en equipo.
+// Visión de Victoria (v0.2):
+// - El unicornio mágico puede VOLAR (con alguien encima).
+// - El dragón ya NO te persigue: el dragón trata de destruir las casas, y tú tratas de pararlo.
+// - El dragón tiene su propia casa: un lugar con muchas rocas.
 //
-// Victoria's vision: ride a magical unicorn that jumps, with someone on top,
-// traveling all over the world (jungle, castle, forest, clouds). A bad dragon chases
-// you and tries to eat you; you control the unicorn to escape and attack with magic.
-// Two players: the other side is two players who work as a team.
+// Victoria's vision (v0.2):
+// - The magical unicorn can FLY (with someone riding on top).
+// - The dragon no longer chases you: the dragon tries to destroy the houses, and you try to stop it.
+// - The dragon has its own home: a place with lots of rocks.
 //
-// Esto es un prototipo v0.1 para que Victoria lo vea y reaccione.
-// This is a v0.1 prototype for Victoria to see and react to.
+// Es un solo pantallazo (sin scroll) para que una niña pequeña vea todo de un vistazo.
+// It's a single screen (no scrolling) so a little kid can see everything at once.
 
-// El mundo es ancho para poder "viajar por todo el mundo" / The world is wide so we can "travel all over the world"
-const WORLD_W = 3200;
-const WORLD_H = 500;
+const GAME_W = 800;
+const GAME_H = 500;
+const GROUND_Y = 440;
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: WORLD_H,
+    width: GAME_W,
+    height: GAME_H,
     parent: 'game-container',
     backgroundColor: '#a7d8ff', // cielo azul suave / soft blue sky
     physics: {
         default: 'arcade',
-        arcade: { gravity: { y: 900 }, debug: false }
+        arcade: { gravity: { y: 0 }, debug: false } // sin gravedad: el unicornio vuela / no gravity: the unicorn flies
     },
-    scene: { preload, create, update }
+    scene: { create, update }
 };
 
-let unicorn, rider, dragon, sparkles, goal;
-let cursors, spaceKey;
-let sparkleCount = 0;
+let unicorn, rider, dragon, houses;
+let cursors;
+let housesSaved = 0;
 let scoreText, messageText;
-let gameState = 'playing';
-let dragonReady = false; // el dragón espera un poco antes de perseguir / the dragon waits a bit before chasing
+
+// El dragón tiene su casa de rocas a la derecha / The dragon's rocky home is on the right
+const DRAGON_HOME = { x: 720, y: 150 };
+let dragonState = 'resting'; // 'resting' (en casa) | 'attacking' (va a una casa) | 'returning' (regresa a casa)
+let dragonTarget = null;
 
 const game = new Phaser.Game(config);
 
-function preload() {}
-
 function create() {
-    this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H);
-    this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
+    // ☁️ Nubes decorativas / Decorative clouds
+    [[120, 70], [330, 50], [520, 90], [650, 60]].forEach(([x, y]) => {
+        this.add.text(x, y, '☁️', { fontSize: '40px' }).setOrigin(0.5);
+    });
+    this.add.text(60, 60, '☀️', { fontSize: '44px' }).setOrigin(0.5);
 
-    // ☁️ Nubes en el cielo (parallax: se mueven despacio para dar profundidad)
-    // Clouds in the sky (parallax: they move slowly to feel like depth)
-    for (let i = 0; i < 14; i++) {
-        const c = this.add.text(150 + i * 240, 50 + (i % 3) * 45, '☁️', { fontSize: '44px' });
-        c.setScrollFactor(0.3);
-    }
-
-    // 🌴 Selva: muchos árboles en el suelo / Jungle: lots of trees on the ground
-    for (let x = 200; x < 1600; x += 180) {
-        this.add.text(x, 410, '🌴', { fontSize: '48px' }).setOrigin(0.5);
-    }
-
-    // 🏰 El castillo a mitad de camino / The castle partway through the world
-    this.add.text(1850, 380, '🏰', { fontSize: '90px' }).setOrigin(0.5);
-
-    // 🌲🌲 El bosque del final / The forest at the very end
-    for (let x = 2400; x < WORLD_W; x += 130) {
-        this.add.text(x, 405, '🌲', { fontSize: '46px' }).setOrigin(0.5);
-    }
-
-    // 🟩 El suelo verde para que el unicornio camine y salte / Green ground so the unicorn can walk and jump
-    const ground = this.add.rectangle(WORLD_W / 2, 470, WORLD_W, 60, 0x5fbf60);
+    // 🟩 El suelo verde / The green ground
+    const ground = this.add.rectangle(GAME_W / 2, GROUND_Y + 40, GAME_W, 90, 0x5fbf60);
     ground.setStrokeStyle(2, 0x3f8f40);
-    this.physics.add.existing(ground, true);
 
-    // 🦄 El unicornio mágico que Victoria controla / The magical unicorn Victoria controls
-    unicorn = this.add.text(120, 400, '🦄', { fontSize: '48px' }).setOrigin(0.5);
+    // 🪨 La casa del dragón: un lugar con muchas rocas / The dragon's home: a place with lots of rocks
+    [[680, 120], [740, 130], [710, 175], [760, 185], [690, 205]].forEach(([x, y]) => {
+        this.add.text(x, y, '🪨', { fontSize: '30px' }).setOrigin(0.5);
+    });
+    this.add.text(720, 95, 'casa del dragón', { fontSize: '11px', fill: '#555' }).setOrigin(0.5);
+
+    // 🏠 Las casas que el dragón quiere destruir / The houses the dragon wants to wreck
+    houses = this.physics.add.staticGroup();
+    [140, 300, 470].forEach((x) => {
+        const h = this.add.text(x, GROUND_Y - 8, '🏠', { fontSize: '46px' }).setOrigin(0.5);
+        this.physics.add.existing(h, true);
+        h.isBurning = false;
+        houses.add(h);
+    });
+
+    // 🦄 El unicornio mágico volador que Victoria controla / The flying magical unicorn Victoria controls
+    unicorn = this.add.text(120, 320, '🦄', { fontSize: '48px' }).setOrigin(0.5);
     this.physics.add.existing(unicorn);
     unicorn.body.setCollideWorldBounds(true);
-    this.physics.add.collider(unicorn, ground);
 
-    // 👧 Alguien va montado encima del unicornio ("alguien esté encima")
-    // Someone rides on top of the unicorn ("someone on top") — sigue al unicornio cada frame
-    rider = this.add.text(unicorn.x, unicorn.y - 34, '👧', { fontSize: '28px' }).setOrigin(0.5);
+    // 👧 Alguien va montado encima / Someone rides on top
+    rider = this.add.text(unicorn.x, unicorn.y - 34, '👧', { fontSize: '26px' }).setOrigin(0.5);
 
-    this.cameras.main.startFollow(unicorn, true, 0.1, 0.1);
-
-    // 🐉 El dragón malo que persigue / The bad dragon that chases (vuela, sin gravedad)
-    // Empieza atrás del unicornio para que Victoria tenga ventaja / Starts behind the unicorn so Victoria gets a head start
-    dragon = this.add.text(-120, 360, '🐉', { fontSize: '52px' }).setOrigin(0.5);
+    // 🐉 El dragón empieza en su casa de rocas / The dragon starts at its rocky home
+    dragon = this.add.text(DRAGON_HOME.x, DRAGON_HOME.y, '🐉', { fontSize: '50px' }).setOrigin(0.5);
     this.physics.add.existing(dragon);
-    dragon.body.setAllowGravity(false);
-    this.physics.add.overlap(unicorn, dragon, dragonTouch, null, this);
 
-    // ✨ Magia para recoger por el camino / Magic to collect along the way
-    sparkles = this.physics.add.staticGroup();
-    for (let x = 350; x < 3000; x += 260) {
-        const s = this.add.text(x, 330 - (x % 80), '✨', { fontSize: '32px' }).setOrigin(0.5);
-        this.physics.add.existing(s, true);
-        sparkles.add(s);
-    }
-    this.physics.add.overlap(unicorn, sparkles, collectSparkle, null, this);
+    // Si el unicornio choca con el dragón, lo para con magia / If the unicorn bumps the dragon, it stops it with magic
+    this.physics.add.overlap(unicorn, dragon, stopDragon, null, this);
+    // Si el dragón llega a una casa, la asusta un ratito / If the dragon reaches a house, it scares it briefly
+    this.physics.add.overlap(dragon, houses, dragonReachesHouse, null, this);
 
-    // 🚩 La meta en el bosque / The goal in the forest
-    goal = this.add.text(3120, 400, '🚩', { fontSize: '60px' }).setOrigin(0.5);
-    this.physics.add.existing(goal, true);
-    this.physics.add.overlap(unicorn, goal, reachGoal, null, this);
-
-    // Controles muy fáciles para una niña pequeña / Very easy controls for a little kid
     cursors = this.input.keyboard.createCursorKeys();
-    spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-    // Contador de magia arriba a la izquierda / Magic counter top-left
-    scoreText = this.add.text(16, 16, '✨ 0', {
-        fontSize: '22px',
+    // Contador de casas salvadas / Houses-saved counter
+    scoreText = this.add.text(16, 16, '🏠 Casas salvadas / saved: 0', {
+        fontSize: '18px',
         fill: '#fff',
         backgroundColor: 'rgba(0,0,0,0.7)',
         padding: { x: 10, y: 6 }
-    }).setScrollFactor(0);
+    });
 
-    messageText = this.add.text(400, 220, '', {
-        fontSize: '26px',
+    messageText = this.add.text(GAME_W / 2, 250, '', {
+        fontSize: '22px',
         fill: '#fff',
         backgroundColor: 'rgba(0,0,0,0.85)',
-        padding: { x: 20, y: 14 },
+        padding: { x: 18, y: 12 },
         align: 'center'
-    }).setOrigin(0.5).setScrollFactor(0);
+    }).setOrigin(0.5);
 
-    // El dragón da un respiro: espera 3 segundos antes de empezar a perseguir
-    // The dragon gives a grace period: it waits 3 seconds before it starts chasing
-    dragonReady = false;
-    messageText.setText('¡Prepárate! Viene el dragón 🐉\nGet ready! The dragon is coming');
-    this.time.delayedCall(3000, () => {
-        dragonReady = true;
-        if (gameState === 'playing') messageText.setText('');
-    });
+    // Pista de inicio / Intro hint
+    messageText.setText(
+        'Vuela con las flechas y choca con el dragón 🐉\n' +
+        'para pararlo antes de que llegue a las casas 🏠\n\n' +
+        'Fly with the arrows and bump the dragon\nto stop it before it reaches the houses!'
+    );
+    this.time.delayedCall(4000, () => messageText.setVisible(false));
+
+    // El dragón empieza a atacar después de un ratito / The dragon starts attacking after a moment
+    this.time.delayedCall(4500, () => startAttack.call(this));
 }
 
 function update() {
     // El rider siempre va encima del unicornio / The rider always stays on top of the unicorn
-    if (rider && unicorn) {
-        rider.x = unicorn.x;
-        rider.y = unicorn.y - 34;
-    }
+    rider.x = unicorn.x;
+    rider.y = unicorn.y - 34;
 
-    if (gameState !== 'playing') {
-        // Para volver a empezar, salta / To start again, jump
-        if (Phaser.Input.Keyboard.JustDown(cursors.up) || Phaser.Input.Keyboard.JustDown(spaceKey)) {
-            sparkleCount = 0;
-            gameState = 'playing';
-            this.scene.restart();
+    // 🦄 Volar en cualquier dirección con las flechas / Fly in any direction with the arrows
+    const SPEED = 260;
+    unicorn.body.setVelocityX(cursors.left.isDown ? -SPEED : cursors.right.isDown ? SPEED : 0);
+    unicorn.body.setVelocityY(cursors.up.isDown ? -SPEED : cursors.down.isDown ? SPEED : 0);
+
+    // 🐉 ¿Qué hace el dragón? / What is the dragon doing?
+    const DRAGON_SPEED = 110; // lento, para que Victoria pueda alcanzarlo / slow, so Victoria can catch it
+    if (dragonState === 'attacking' && dragonTarget) {
+        moveToward(dragon, dragonTarget.x, dragonTarget.y, DRAGON_SPEED);
+    } else if (dragonState === 'returning') {
+        moveToward(dragon, DRAGON_HOME.x, DRAGON_HOME.y, DRAGON_SPEED);
+        if (Phaser.Math.Distance.Between(dragon.x, dragon.y, DRAGON_HOME.x, DRAGON_HOME.y) < 30) {
+            dragon.body.setVelocity(0, 0);
+            dragonState = 'resting';
+            this.time.delayedCall(1500, () => startAttack.call(this)); // descansa y vuelve a intentar / rests then tries again
         }
-        return;
-    }
-
-    // ← → mueven al unicornio / left and right move the unicorn
-    if (cursors.left.isDown) {
-        unicorn.body.setVelocityX(-240);
-    } else if (cursors.right.isDown) {
-        unicorn.body.setVelocityX(240);
     } else {
-        unicorn.body.setVelocityX(0);
-    }
-
-    // ↑ o ESPACIO para saltar (solo cuando toca el suelo) / up or SPACE to jump (only when on the ground)
-    const onGround = unicorn.body.touching.down || unicorn.body.blocked.down;
-    if ((cursors.up.isDown || spaceKey.isDown) && onGround) {
-        unicorn.body.setVelocityY(-520);
-    }
-
-    // Durante el respiro, el dragón se queda quieto / During the grace period, the dragon stays still
-    if (!dragonReady) {
         dragon.body.setVelocity(0, 0);
-        return;
-    }
-
-    // 🐉 El dragón persigue al unicornio, pero más despacio para que Victoria pueda escapar
-    // The dragon chases the unicorn, but slower so Victoria can escape
-    const DRAGON_SPEED = 150; // el unicornio va a 240, así que siempre puede huir / unicorn is 240, so she can always run
-    if (dragon.x < unicorn.x - 5) {
-        dragon.body.setVelocityX(DRAGON_SPEED);
-    } else if (dragon.x > unicorn.x + 5) {
-        dragon.body.setVelocityX(-DRAGON_SPEED);
-    } else {
-        dragon.body.setVelocityX(0);
-    }
-    // El dragón también sube y baja suave hacia el unicornio / The dragon also drifts gently up and down toward the unicorn
-    if (dragon.y < unicorn.y - 5) {
-        dragon.body.setVelocityY(DRAGON_SPEED * 0.5);
-    } else if (dragon.y > unicorn.y + 5) {
-        dragon.body.setVelocityY(-DRAGON_SPEED * 0.5);
-    } else {
-        dragon.body.setVelocityY(0);
     }
 }
 
-function collectSparkle(unicorn, sparkle) {
-    // Recoger magia suma al contador / Collecting magic adds to the counter
-    sparkle.destroy();
-    sparkleCount++;
-    scoreText.setText(`✨ ${sparkleCount}`);
+// Mueve un objeto hacia un punto / Moves an object toward a point
+function moveToward(obj, tx, ty, speed) {
+    const angle = Phaser.Math.Angle.Between(obj.x, obj.y, tx, ty);
+    obj.body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
 }
 
-function reachGoal() {
-    if (gameState !== 'playing') return;
-    // ¡Llegó al bosque! Mensaje feliz / Reached the forest! Happy message
-    gameState = 'won';
-    messageText.setText(
-        `¡Lo lograste! Llegaste al bosque 🌲🎉\n` +
-        `You did it! You reached the forest!\n` +
-        `Magia / Magic: ✨ ${sparkleCount}\n\n` +
-        `Presiona ↑ o ESPACIO para jugar otra vez\n` +
-        `Press ↑ or SPACE to play again`
-    );
+// El dragón elige una casa y sale a atacar / The dragon picks a house and sets off to attack
+function startAttack() {
+    const standing = houses.getChildren().filter(h => !h.isBurning);
+    if (standing.length === 0) return;
+    dragonTarget = Phaser.Utils.Array.GetRandom(standing);
+    dragonState = 'attacking';
 }
 
-function dragonTouch() {
-    if (gameState !== 'playing') return;
-    if (!dragonReady) return; // durante el respiro no atrapa / it can't catch during the grace period
-    // Falla suave y amable: nada de "GAME OVER", solo "casi" y a empezar de nuevo
-    // Gentle, kind failure: no "GAME OVER", just "almost" and start again
-    gameState = 'caught';
-    messageText.setText(
-        `¡Casi! El dragón casi te come 🐉\n` +
-        `Almost! The dragon almost got you\n\n` +
-        `Presiona ↑ o ESPACIO para intentar otra vez\n` +
-        `Press ↑ or SPACE to try again`
-    );
+// El unicornio choca con el dragón: lo para con magia / The unicorn bumps the dragon: stops it with magic
+function stopDragon(unicorn, dragon) {
+    if (dragonState !== 'attacking') return;
+    dragonState = 'returning';
+    dragonTarget = null;
+    housesSaved++;
+    scoreText.setText('🏠 Casas salvadas / saved: ' + housesSaved);
+    sparkleBurst.call(this, dragon.x, dragon.y);
+    flashMessage.call(this, '¡Lo paraste con magia! ✨\nYou stopped it with magic!', 1200);
+}
+
+// El dragón llega a una casa: la asusta un ratito (sin destruirla de verdad) / Dragon reaches a house: scares it briefly (no real destruction)
+function dragonReachesHouse(dragon, house) {
+    if (dragonState !== 'attacking' || house.isBurning) return;
+    house.isBurning = true;
+    // La casa se pone roja y tiembla (sin cambiar el emoji, así no falla en ningún navegador)
+    // The house turns red and shakes (no emoji swap, so it can't tofu on any browser)
+    house.setTint(0xff6b6b);
+    const homeX = house.x;
+    this.tweens.add({ targets: house, x: homeX + 6, duration: 60, yoyo: true, repeat: 5,
+        onComplete: () => { house.x = homeX; } });
+    dragonState = 'returning';
+    dragonTarget = null;
+    flashMessage.call(this, '¡El dragón asustó una casa! 🐉\nThe dragon scared a house!', 1200);
+    // La casa se recupera solita / The house recovers on its own
+    this.time.delayedCall(2000, () => {
+        house.clearTint();
+        house.isBurning = false;
+    });
+}
+
+// Un brillito de magia que aparece y se desvanece / A little magic sparkle that pops and fades
+function sparkleBurst(x, y) {
+    const s = this.add.text(x, y, '✨', { fontSize: '40px' }).setOrigin(0.5);
+    this.tweens.add({ targets: s, alpha: 0, scale: 1.8, duration: 500, onComplete: () => s.destroy() });
+}
+
+// Muestra un mensaje corto que se oculta solo / Shows a short message that hides itself
+// Ocultamos con setVisible(false) en vez de texto vacío: un texto vacío con fondo deja un cuadrito negro.
+// We hide with setVisible(false) instead of empty text: empty text with a background leaves a little black box.
+function flashMessage(text, ms) {
+    messageText.setText(text).setVisible(true);
+    this.time.delayedCall(ms, () => {
+        if (messageText.text === text) messageText.setVisible(false);
+    });
 }
