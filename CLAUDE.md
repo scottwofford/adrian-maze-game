@@ -1,44 +1,82 @@
-# Repository Guidelines - Adrian's Maze Game
+# Repository Guidelines - Kids' Game Studio
+
+This repo is a **collection of browser games, one per kid**. Each kid gets their own
+subfolder (`adrian/`, `rafa/`, `victoria/`, ...) holding a self-contained game plus its
+own dev tracking. The root holds a landing page that links to every kid's game and this
+shared guide. **This file is generic and applies to every game.** A kid's folder may add
+its own `CLAUDE.md` with game-specific design notes; when it does, that file wins for
+anything inside that folder.
+
+Este repo es una **colección de juegos en el navegador, uno por cada niño**. Cada niño
+tiene su propia carpeta (`adrian/`, `rafa/`, `victoria/`, ...). Este archivo es genérico y
+aplica a todos los juegos.
 
 ## Language / Idioma
 
-**Always reply in both English and Spanish.** This project is bilingual!
+**Always reply in both English and Spanish.** These games are for Scott's kids and are bilingual!
 
-**Siempre responde en inglés y español.** ¡Este proyecto es bilingüe!
+**Siempre responde en inglés y español.** ¡Estos juegos son para los hijos de Scott y son bilingües!
 
 ---
 
 ## Purpose & Scope
 
-**Core Goal:** Build a 2-player browser-based maze racing game with combat, designed by Adrian (6 years old).
+**Core Goal:** Build simple, fun, browser-based games designed BY the kids themselves. Each
+kid is the game designer; our job is to bring their ideas to life.
 
-**Objetivo Principal:** Construir un juego de laberinto para 2 jugadores en el navegador con combate, diseñado por Adrian (6 años).
+**Objetivo Principal:** Construir juegos sencillos y divertidos en el navegador, diseñados
+POR los propios niños. Cada niño es el diseñador del juego; nuestro trabajo es darle vida a
+sus ideas.
 
-**Target Audience:** Kids ages 6-12, families playing together
+**Target Audience:** Kids ages 4-12, families playing together
 
 **Tech Stack:**
-- **Game Engine:** Phaser 3 (JavaScript HTML5 game framework)
+- **Game Engine:** Phaser 3 (JavaScript HTML5 game framework, loaded via CDN)
 - **Language:** JavaScript (ES6+)
 - **Platform:** Web browsers (Chrome, Firefox, Safari)
 - **Deployment:** GitHub Pages (free static hosting)
 - **Development Server:** Python's http.server or Node.js http-server
 
+---
+
+## Kick Off a New Kid's Game (no setup required)
+
+When a new kid wants a game, copy an existing kid's folder as the template (`rafa/` is the
+smallest, cleanest scaffold) and capture their vision. Steps:
+
+1. **Create the folder:** `mkdir -p <kid>/dev/context <kid>/tests/{unit,integration,e2e} <kid>/learning`
+2. **Capture their vision verbatim.** Record the kid describing their game and write their
+   EXACT words into `<kid>/README.md`, Spanish first then an English translation. Never
+   paraphrase or invent details. Strip out the adult's prompting questions; keep only what
+   the kid said. Put the design bullets into `<kid>/dev/OBJECTIVE.md`.
+3. **Scaffold the rest** by mirroring an existing kid: `CHANGELOG.md`, `index.html`
+   (Phaser CDN + `<script src="game.js">`), a placeholder `game.js`, empty `dev/NOTES.md`,
+   `dev/TODO.md`, `dev/context/*`, `tests/*/README.md`, `learning/*`.
+4. **Add the kid to the root landing page** (`index.html`) so their game is reachable.
+5. Commit: `feat(<kid>): add <kid>'s game project`.
+
+That's the whole setup. Building the actual game is a separate objective the kid drives.
+
+---
+
 ## Development Workflow
 
-1. **Start with an OBJECTIVE** (e.g., 'add bow and arrow weapon', 'implement trap system')
-2. Make sure we're on a feature branch (not `main`)
+1. **Start with an OBJECTIVE** (e.g., 'add bow and arrow weapon', 'build the first playable prototype')
+2. Make sure we're on a feature branch (not `main`) when the work is substantial
 3. Commit changes regularly with clear messages
-4. Push to origin and open a draft PR (to `main`)
-5. Implement the OBJECTIVE. Add out-of-scope items to `dev/TODO.md`
+4. Push to origin and open a draft PR (to `main`) for substantial work
+5. Implement the OBJECTIVE. Add out-of-scope items to `<kid>/dev/TODO.md`
 6. Test gameplay manually (and automated tests when applicable)
 7. When OBJECTIVE is complete:
-   - Update `CHANGELOG.md`
-   - Clear `dev/OBJECTIVE.md` and `dev/NOTES.md`
+   - Update `<kid>/CHANGELOG.md`
+   - Clear `<kid>/dev/OBJECTIVE.md` and `<kid>/dev/NOTES.md`
    - Mark PR as ready
+
+All paths below are relative to the kid's folder you're working in.
 
 ### Maintaining Context
 
-Update files in `dev/context/` as we learn:
+Update files in `<kid>/dev/context/` as we learn:
 
 - **`codebase_learnings.md`**: Phaser patterns, game architecture, how systems interact
 - **`decisions.md`**: Technical decisions (why Phaser over Pygame, collision system choices, etc.)
@@ -46,7 +84,7 @@ Update files in `dev/context/` as we learn:
 
 Include timestamps (YYYY-MM-DD) when adding entries.
 
-**File Encoding:** For CSV files with Spanish/non-ASCII text, add UTF-8 BOM to ensure proper display in GitHub, Excel, and editors. See `dev/context/gotchas.md` for details.
+**File Encoding:** For CSV files with Spanish/non-ASCII text, add UTF-8 BOM to ensure proper display in GitHub, Excel, and editors. See a kid's `dev/context/gotchas.md` for details.
 
 ### Objective Workflow
 
@@ -54,14 +92,14 @@ Include timestamps (YYYY-MM-DD) when adding entries.
    ```bash
    git checkout main
    git pull
-   git checkout -b feature/<short-handle>
+   git checkout -b feature/<kid>-<short-handle>
    ```
 
-   Update `dev/OBJECTIVE.md`, then:
+   Update `<kid>/dev/OBJECTIVE.md`, then:
    ```bash
-   git add dev/OBJECTIVE.md
-   git commit -m "chore: set objective to <description>"
-   git push -u origin feature/<short-handle>
+   git add <kid>/dev/OBJECTIVE.md
+   git commit -m "chore(<kid>): set objective to <description>"
+   git push -u origin feature/<kid>-<short-handle>
    gh pr create --draft --fill --title "<Objective Title>"
    ```
 
@@ -69,23 +107,41 @@ Include timestamps (YYYY-MM-DD) when adding entries.
    - Test in browser frequently (refresh with Cmd+Shift+R to clear cache)
    - Check browser console (F12) for errors
    - Commit in small chunks with clear messages
-   - Use emojis in commits if it helps! (Adrian likes them 🎮)
+   - Use emojis in commits if it helps! (The kids like them 🎮)
 
 3. **Wrap up the objective**
    ```bash
    git status
    ```
-   - Update `CHANGELOG.md` with a bullet referencing the objective
-   - Clear `dev/NOTES.md` and `dev/OBJECTIVE.md`
+   - Update `<kid>/CHANGELOG.md` with a bullet referencing the objective
+   - Clear `<kid>/dev/NOTES.md` and `<kid>/dev/OBJECTIVE.md`
    ```bash
-   git commit -a -m "feat: <objective> is ready"
+   git commit -a -m "feat(<kid>): <objective> is ready"
    gh pr ready
    ```
 
-## Project Structure
+## Repo Structure
 
 ```
-adrian-maze-game/
+adrian-maze-game/                 # repo (named after the first game)
+├── index.html                    # Landing page: links to every kid's game
+├── README.md                     # Repo overview
+├── CHANGELOG.md                  # Repo-level change history
+├── CLAUDE.md                     # This shared guide
+├── adrian/                       # Adrian's game (one folder per kid)
+├── rafa/                         # Rafa's game
+└── victoria/                     # Victoria's game
+```
+
+Each kid's folder follows the same shape:
+
+```
+<kid>/
+├── index.html                    # Entry point (Phaser CDN + game.js)
+├── game.js                       # Main game code
+├── README.md                     # The kid's vision, in their exact words (ES + EN)
+├── CHANGELOG.md                  # Record of changes
+├── CLAUDE.md                     # (optional) game-specific design notes
 ├── dev/                          # Development tracking
 │   ├── OBJECTIVE.md              # Current objective
 │   ├── NOTES.md                  # Implementation scratchpad
@@ -94,33 +150,13 @@ adrian-maze-game/
 │       ├── codebase_learnings.md
 │       ├── decisions.md
 │       └── gotchas.md
-├── tests/                        # Test organization
-│   ├── unit/                     # Unit tests (game logic)
-│   ├── integration/              # Integration tests (system interactions)
-│   └── e2e/                      # End-to-end tests (full gameplay)
-├── assets/                       # Game assets (images, sounds, sprites)
-│   ├── sprites/
-│   ├── sounds/
-│   └── music/
-├── src/                          # Game source code (when we modularize)
-│   ├── scenes/                   # Phaser scenes
-│   ├── entities/                 # Player, enemies, objects
-│   ├── systems/                  # Combat, health, crafting
-│   └── utils/                    # Helper functions
-├── docs/                         # Documentation
-│   ├── ADRIAN_ANSWERS.md         # Design decisions from Adrian
-│   ├── TREE_EXPLANATION.md       # GitHub explanation for Adrian
-│   └── HOW_TO_RUN.md             # Setup instructions
-├── index.html                    # Main entry point
-├── game.js                       # Main game code (will refactor later)
-├── CHANGELOG.md                  # Record of changes
-├── CLAUDE.md                     # This file
-└── README.md                     # Project overview
+├── tests/                        # unit / integration / e2e
+└── learning/                     # Learning materials for the kid
 ```
 
 ## Build, Test, and Development Commands
 
-### Running the Game
+### Running the Games
 ```bash
 # Option 1: Python (simplest)
 python3 -m http.server 8080
@@ -128,7 +164,8 @@ python3 -m http.server 8080
 # Option 2: Node.js
 npx http-server -p 8080
 
-# Then open: http://localhost:8080
+# Then open: http://localhost:8080  (landing page)
+# A specific game: http://localhost:8080/victoria/
 ```
 
 ### Testing
@@ -185,6 +222,8 @@ function cp(a,b,c){return this.add.rectangle(a,b,32,32,c);}
 [optional body]
 ```
 
+Use the kid's name as the scope for game-specific work (e.g., `feat(victoria): ...`).
+
 ### Types
 - **feat:** New feature (weapons, traps, levels)
 - **fix:** Bug fix
@@ -196,19 +235,18 @@ function cp(a,b,c){return this.add.rectangle(a,b,32,32,c);}
 
 ### Examples
 ```bash
-feat(combat): add bow and arrow weapon
-fix(collision): prevent players from passing through walls
-docs: update HOW_TO_RUN with troubleshooting
+feat(adrian): add bow and arrow weapon
+fix(rafa): prevent players from passing through walls
+feat(victoria): build the first playable prototype
+docs: update repo README with the new game
 style(ui): improve health bar display
-refactor(player): extract player creation into function
-test(combat): add unit tests for damage calculation
-chore: set objective to implement trap system
+chore(adrian): set objective to implement trap system
 ```
 
 ## Testing Guidelines
 
 ### Manual Testing Checklist
-- [ ] Both players can move and jump
+- [ ] Players can move and jump
 - [ ] Collisions work correctly
 - [ ] Win condition triggers properly
 - [ ] No console errors
@@ -222,28 +260,31 @@ chore: set objective to implement trap system
 
 ## Security & Configuration
 
-- No secrets/API keys needed for now (client-side only game)
+- No secrets/API keys needed for now (client-side only games)
 - Assets must be publicly accessible
 - Be careful with user input if we add it later (leaderboards, names)
 
-## Working with Adrian (The Designer)
+## Working with the Kid Designer
+
+Each game is designed by a kid. Their folder's `CLAUDE.md` (if present) captures who they
+are and what they want. General guidance for working with any of them:
 
 ### Communication Guidelines
-- **Show, don't tell:** Let Adrian play and give feedback
+- **Show, don't tell:** Let the kid play and give feedback
 - **Ask questions:** "What should happen when...?"
 - **Use visual examples:** Show options rather than describe
-- **Keep it fun:** This is a learning experience for a 6-year-old!
-- **Document everything:** Adrian's ideas are gold 💡
+- **Keep it fun:** This is a learning experience for a kid!
+- **Document everything:** The kid's ideas are gold 💡
 
 ### Getting Feedback
-1. Let Adrian play the current version
+1. Let the kid play the current version
 2. Ask: "What do you like?"
 3. Ask: "What should we change?"
 4. Ask: "What should we add next?"
-5. Document in `dev/NOTES.md`
+5. Document in `<kid>/dev/NOTES.md`
 
 ### Design Decisions
-- Adrian has final say on game design
+- The kid has final say on game design
 - Technical implementation is our job
 - Balance fun vs. technical feasibility
 - Start simple, add complexity gradually
@@ -266,6 +307,10 @@ const player = this.physics.add.sprite(x, y, 'player');
 // Simple shape
 const platform = this.add.rectangle(x, y, width, height, color);
 this.physics.add.existing(platform, true); // true = static
+
+// Emoji as a sprite (the house style for these games)
+const hero = this.add.text(x, y, '🦄', { fontSize: '40px' }).setOrigin(0.5);
+this.physics.add.existing(hero);
 ```
 
 ### Collisions
@@ -287,18 +332,21 @@ const spacebar = this.input.keyboard.addKey('SPACE');
 2. Source: Deploy from branch `main`
 3. Folder: `/` (root)
 4. Save
-5. Game will be live at: `https://luthienresearch.github.io/adrian-maze-game/`
+5. Live at: `https://scottwofford.github.io/adrian-maze-game/` (landing page)
+   - A specific game: `https://scottwofford.github.io/adrian-maze-game/victoria/`
+
+Use relative links everywhere so games work under the Pages subpath.
 
 ### Pre-Deployment Checklist
 - [ ] Test in multiple browsers
 - [ ] Check all assets load correctly
 - [ ] No console errors
 - [ ] Game is playable start-to-finish
-- [ ] README has clear instructions
+- [ ] Landing page links to every game
 
 ## Learning Resources
 
-### For Adrian
+### For the Kids
 - Phaser examples: https://phaser.io/examples
 - Game mechanics videos on YouTube
 - Play similar games for inspiration
@@ -310,7 +358,7 @@ const spacebar = this.input.keyboard.addKey('SPACE');
 
 ## Project Philosophy
 
-**From Adrian's perspective:**
+**From the kid's perspective:**
 - **Fun first:** If it's not fun, change it
 - **Fast iteration:** Build → Play → Feedback → Improve
 - **Learn by doing:** Don't overthink, just try it
@@ -324,28 +372,30 @@ const spacebar = this.input.keyboard.addKey('SPACE');
 
 ## Notes for Claude Code
 
-- This is a learning project for a 6-year-old designer
+- These are learning projects for kid designers
 - Prioritize clarity and fun over technical perfection
 - Explain trade-offs in simple terms
 - Suggest visual examples when possible
 - Keep code comments friendly and educational
-- Use emojis in communication (Adrian loves them!)
+- Use emojis in communication (the kids love them!)
 - Balance "doing it right" with "shipping something playable"
 
 ## Questions to Ask When Stuck
 
 1. **Does this make the game more fun?**
-2. **Would Adrian understand this?**
+2. **Would the kid understand this?**
 3. **Can we test this easily?**
 4. **Is this the simplest solution?**
 5. **What would break if we did this?**
 
 ---
 
-**Remember:** This game is being built WITH Adrian, not FOR Adrian. His ideas drive the design. Our job is to bring them to life! 🎮✨
+**Remember:** These games are built WITH the kids, not FOR them. Their ideas drive the design.
+Our job is to bring them to life! 🎮✨
 
-**Testing with Luthien:** This project also serves as a real-world test case for Scott's Luthien AI proxy system. Document interesting interactions!
+**Testing with Luthien:** This project also serves as a real-world test case for Scott's
+Luthien AI proxy system. Document interesting interactions!
 
 ---
 
-*Last updated: 2026-01-01*
+*Last updated: 2026-06-14*
