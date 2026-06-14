@@ -12,6 +12,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-06-14
+
+### Changed (rediseño pedido por Victoria / redesign Victoria asked for)
+- 🪨 La casa del dragón ahora es un montón de MUCHAS rocas encima de una nube, allá arriba
+  The dragon's house is now a pile of MANY rocks on top of a cloud, way up high
+- 🦄 Mundo alto: vuelas hacia arriba "por partes" por las nubes hasta la casa del dragón
+  Tall world: you fly upward "in parts" through the clouds to the dragon's house
+- 🐉 El dragón se queda en su casa y solo baja a coger una casa; chocas con él para bloquearlo
+  The dragon stays at its home and only swoops down to grab a house; bump it to block it
+- 🎉 Mensaje feliz al llegar hasta la casa del dragón / Happy message when you reach the dragon's house
+- 📝 Prompts textuales de Victoria guardados en dev/context/victoria-prompts.md
+  Victoria's verbatim prompts saved in dev/context/victoria-prompts.md
+
+---
+
 ## [0.2.0] - 2026-06-14
 
 ### Changed (rediseño pedido por Victoria / redesign Victoria asked for)

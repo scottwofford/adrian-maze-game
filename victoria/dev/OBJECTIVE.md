@@ -1,28 +1,26 @@
 # Objetivo Actual / Current Objective
 
-**Estado / Status:** Prototipo v0.2 construido, esperando reacción de Victoria / v0.2 prototype built, awaiting Victoria's feedback
+**Estado / Status:** Prototipo v0.3 construido, esperando reacción de Victoria (está en su siesta)
+v0.3 prototype built, awaiting Victoria's feedback (she's napping)
 
-## Lo nuevo que pidió Victoria (2026-06-14) / What Victoria asked for next
+**Sus palabras exactas están en / Her exact words are in:** [`context/victoria-prompts.md`](context/victoria-prompts.md)
 
-Palabras de Victoria / Victoria's words:
+## Lo que pidió Victoria para v0.3 (2026-06-14) / What Victoria asked for in v0.3
 
-> "Yo quiero que el unicornio pueda volar... el dragón no está persiguiendo... el dragón está
-> tratando de destruir casas, entonces tú tratas de pararlo... él tiene su casa, que es un
-> lugar con muchas rocas."
-
-Diseño / Design:
-- 🦄 El unicornio ahora puede VOLAR (con alguien encima). / The unicorn can now FLY (with someone on top).
-- 🐉 El dragón YA NO te persigue. El dragón trata de DESTRUIR las casas y tú tratas de PARARLO.
-  The dragon NO LONGER chases you. It tries to WRECK the houses and you try to STOP it.
-- 🪨 El dragón tiene su propia casa: un lugar con muchas rocas. / The dragon has its own home: a place with lots of rocks.
+- 🪨 El dragón ya no anda volando: vive en su lugar de MUCHAS rocas (más que antes), ENCIMA de una nube, arriba.
+  The dragon no longer roams: it lives in its place of MANY rocks (more than before), ON a cloud, up high.
+- 🦄 El mundo es MUY LARGO: vuelas POR PARTES hacia arriba hasta la casa del dragón.
+  The world is VERY LONG: you fly UP IN PARTS to the dragon's house.
+- 💥 Si chocas con el dragón, lo BLOQUEAS de coger una casa. / If you bump the dragon, you BLOCK it from grabbing a house.
 
 ## Preguntas abiertas / Open questions ("y qué más")
 
-- ¿Cómo paras al dragón: chocando con él, o disparando magia? (Ahora: chocas con él.)
-  How do you stop the dragon: bump into it, or shoot magic? (Now: you bump into it.)
-- ¿Cómo se gana? ¿Salvar todas las casas? ¿Cuántas veces?
-  How do you win? Save all the houses? How many times?
-- ¿Qué más quiere agregar Victoria? / What else does Victoria want to add?
+- ¿Qué pasa cuando llegas hasta la casa del dragón? ¿Ganas? ¿Lo vences ahí? (Ahora: mensaje feliz.)
+  What happens when you reach the dragon's house? Do you win? Beat it there? (Now: a happy message.)
+- ¿Cómo paras al dragón: chocando (ahora) o disparando magia desde lejos?
+  How do you stop the dragon: bumping (now) or shooting magic from afar?
+- ¿Cómo se gana del todo? ¿Salvar las casas cuántas veces? / How do you fully win? Save houses how many times?
+- El modo de dos jugadores (dos que trabajan en equipo) sigue pendiente. / Two-player mode (two on a team) still pending.
 
 ## Ideas originales de Victoria / Victoria's original ideas (de la primera grabación / from the first recording)
 
