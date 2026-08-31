@@ -39,6 +39,7 @@ let player1;
 let player2;
 let platforms;
 let lavaTraps;
+let waterTraps;
 let cursors;
 let wasd;
 let player1Lives = STARTING_LIVES;
@@ -54,9 +55,17 @@ let scene; // Reference to scene for use in functions
 const TRAP_LIFE_COST = 1;
 const DAMAGE_COOLDOWN = 1000; // 1 second between hits, so one trap = one life
 
+// Where each player starts, so the water can send them back there
+const P1_START = { x: 100, y: 450 };
+const P2_START = { x: 150, y: 450 };
+
 // Damage cooldown tracking
 let player1LastDamage = 0;
 let player2LastDamage = 0;
+
+// Water cooldown tracking (separate from lava)
+let player1LastWater = 0;
+let player2LastWater = 0;
 
 function preload() {
     // This function will load assets (images, sounds, etc.)
@@ -116,6 +125,17 @@ function create() {
     createLavaTrap(this, 600, 400, 50, 20);  // right - middle platform
     createLavaTrap(this, 650, 240, 50, 20);  // top - high platform near the exit
 
+    // ============================================
+    // 💧 WATER TRAPS - Adrian's rule (2026-08-31):
+    // "Trampas de agua, te devuelven al empezar" - water sends you back to the start.
+    // The water does NOT take a life, it just sends you back.
+    // ============================================
+    waterTraps = this.physics.add.staticGroup();
+
+    createWaterTrap(this, 150, 550, 60, 20);  // bottom left - on the ground
+    createWaterTrap(this, 330, 320, 50, 20);  // middle platform
+    createWaterTrap(this, 710, 400, 50, 20);  // right platform
+
     // Player 1 (Dinosaur 🦖)
     player1 = this.add.text(100, 450, '🦖', {
         fontSize: '60px'
@@ -162,6 +182,10 @@ function create() {
     // Trap collisions - stepping in lava costs a life
     this.physics.add.overlap(player1, lavaTraps, hitLava, null, this);
     this.physics.add.overlap(player2, lavaTraps, hitLava, null, this);
+
+    // Water sends you back to where you started
+    this.physics.add.overlap(player1, waterTraps, hitWater, null, this);
+    this.physics.add.overlap(player2, waterTraps, hitWater, null, this);
 
     // Controls
     cursors = this.input.keyboard.createCursorKeys();
@@ -247,6 +271,73 @@ function createLavaTrap(scene, x, y, width, height) {
     return lava;
 }
 
+// Create a water trap at specified position
+function createWaterTrap(scene, x, y, width, height) {
+    const water = scene.add.rectangle(x, y, width, height, 0x2196f3); // Blue water
+    waterTraps.add(water);
+
+    // Wavy effect so it looks like water
+    scene.tweens.add({
+        targets: water,
+        scaleX: 1.1,
+        duration: 500,
+        yoyo: true,
+        repeat: -1
+    });
+
+    scene.add.text(x, y - 18, '💧', {
+        fontSize: '18px'
+    }).setOrigin(0.5);
+
+    return water;
+}
+
+// Player touched water - go back to the start! / ¡Te regresa al principio!
+function hitWater(player, water) {
+    if (gameOver) return;
+
+    const now = Date.now();
+    const isPlayer1 = (player === player1);
+
+    // Cooldown so the water only sends you back once per splash
+    if (isPlayer1) {
+        if (now - player1LastWater < DAMAGE_COOLDOWN) return;
+        player1LastWater = now;
+    } else {
+        if (now - player2LastWater < DAMAGE_COOLDOWN) return;
+        player2LastWater = now;
+    }
+
+    const playerName = isPlayer1 ? '🦖 Player 1' : '🤖 Player 2';
+    const start = isPlayer1 ? P1_START : P2_START;
+
+    console.log(`💧 ${playerName} fell in the water! Back to the start.`);
+
+    // Send them back to the beginning - no life lost
+    player.setPosition(start.x, start.y);
+    player.body.setVelocity(0, 0);
+
+    showWaterMessage(playerName);
+}
+
+// Flash a message when the water sends a player back
+function showWaterMessage(playerName) {
+    const message = scene.add.text(400, 560, `💧 ${playerName}: ¡Al principio otra vez! / Back to the start!`, {
+        fontSize: '18px',
+        fill: '#4fc3f7',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 4
+    }).setOrigin(0.5);
+
+    scene.tweens.add({
+        targets: message,
+        alpha: 0,
+        duration: 1500,
+        onComplete: () => message.destroy()
+    });
+}
+
 // Player touched lava - lose ONE life! / ¡Pierdes una vida!
 function hitLava(player, lava) {
     if (gameOver) return;
@@ -285,9 +376,12 @@ function hitLava(player, lava) {
         return;
     }
 
-    // Knock player back (so they don't keep taking damage)
+    // Push the player right out of the lava, so one trap only ever costs one life
+    // (Adrian's rule: "las trampas te quitan una vida" - ONE life, not three)
+    const pushLeft = player.x < lava.x;
+    player.x = pushLeft ? lava.x - lava.width / 2 - 40 : lava.x + lava.width / 2 + 40;
     player.body.setVelocityY(-200);
-    player.body.setVelocityX(player.body.velocity.x > 0 ? -100 : 100);
+    player.body.setVelocityX(pushLeft ? -80 : 80);
 
     // Flash player to show they got hurt
     scene.tweens.add({
