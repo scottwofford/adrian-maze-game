@@ -19,6 +19,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-08-31
+
+### Added - La trampa de roca / The rock trap 🪨
+
+Adrian's rule: *"Las trampas de roca son unas que te quitan cinco vidas... y son para el
+tercer nivel."*
+
+- ONE rock trap 🪨, marked on screen with "-5 ❤️" so you can see what it costs
+- Touching it takes **five lives** at once
+- It sits on the high platform right before the exit
+
+**Note for Adrian:** he asked for it in **Level 3**, but Level 3 is not built yet, and
+Level 3 only starts with 3 lives, so a 5-life rock trap there would end the game
+instantly. It is in the level we can play today until Adrian decides.
+
+### Fixed
+- Traps could bounce a player from one trap into another (rock into lava into rock) and eat
+  every life at once. A hit now pushes the player to a spot with no other trap under it,
+  and one hit makes them safe from **every** trap for 1.5 seconds.
+- The lives counter could go negative and crash the heart display.
+
+---
+
 ## [0.3.0] - 2026-08-31
 
 ### Added - Water traps / Trampas de agua 💧

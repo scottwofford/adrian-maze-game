@@ -34,6 +34,7 @@ let badGuys;    // 👾 you DESTROY these with the lightsaber
 let aliens;     // 👽 you only DODGE these
 let volcanoes;  // 🌋 never touch them
 let packages;   // 📦 the bad guys throw these at your ship
+let rockTraps;  // 🪨 five rock traps floating in space - do not touch them
 let cursors;
 let spaceKey;
 let livesText;
@@ -95,6 +96,17 @@ function create() {
     createVolcano(this, 520, 190);
     createVolcano(this, 730, 150);
 
+    // ============================================
+    // 🪨 ROCK TRAPS - Gabriel: "Cinco trampas de roca en la de Gabriel"
+    // Five rocks floating in space. Touching one costs a life.
+    // ============================================
+    rockTraps = this.physics.add.staticGroup();
+    createRockTrap(this, 300, 120);
+    createRockTrap(this, 430, 330);
+    createRockTrap(this, 560, 170);
+    createRockTrap(this, 640, 420);
+    createRockTrap(this, 750, 260);
+
     // The lava ground the volcanoes sit on
     this.add.rectangle(400, 585, 800, 40, 0x4a1c1c);
 
@@ -125,6 +137,7 @@ function create() {
     this.physics.add.overlap(ship, aliens, () => loseLife('👽 ¡Un extraterrestre te dio! / An alien got you!'), null, this);
     this.physics.add.overlap(ship, volcanoes, () => loseLife('🌋 ¡Tocaste un volcán! / You touched a volcano!'), null, this);
     this.physics.add.overlap(ship, packages, hitByPackage, null, this);
+    this.physics.add.overlap(ship, rockTraps, () => loseLife('🪨 ¡Chocaste con una roca! / You hit a rock!'), null, this);
 
     // Score and lives
     // Top right, so the instructions box does not cover it
@@ -168,6 +181,9 @@ function update() {
         if (Date.now() > saberOffAt) hideSaber();
     }
 
+    // The rocks drift, so keep their hit areas on top of the drawing
+    rockTraps.getChildren().forEach(rock => rock.body.updateFromGameObject());
+
     // Clean up enemies that flew off the left side
     cleanUp(badGuys);
     cleanUp(aliens);
@@ -208,6 +224,25 @@ function hitByPackage(shipObj, box) {
     if (gameOver) return;
     box.destroy();
     loseLife('📦 ¡Un paquete te pegó! / A package hit you!');
+}
+
+// A rock floating in space. You cannot cut it and you cannot touch it.
+function createRockTrap(scene, x, y) {
+    const rock = scene.add.text(x, y, '🪨', { fontSize: '38px' }).setOrigin(0.5);
+    rockTraps.add(rock);
+    rock.body.setSize(30, 30);
+
+    // Drift slowly up and down so space feels alive
+    scene.tweens.add({
+        targets: rock,
+        y: y + Phaser.Math.Between(-30, 30),
+        duration: Phaser.Math.Between(2000, 3500),
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+    });
+
+    return rock;
 }
 
 function createVolcano(scene, x, size) {
