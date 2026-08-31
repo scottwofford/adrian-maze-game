@@ -16,6 +16,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-08-31
+
+### Added - Nivel 2 y nivel 3 con boxeo / Level 2 and level 3 with boxing 🥊
+
+Gio: *"I just want a level two lava game... level two is a little harder."* and
+*"I want level three lava game but with boxing."*
+
+- **Level 2:** narrower rocks, wider cracks, three lava pits and low floating lava you
+  must not jump into
+- **Level 3:** 🥊 **boxing.** Three boxers walk back and forth on the rocks. Press
+  SPACE to throw a punch; a punch knocks a boxer out. If a boxer touches you first,
+  you lose a life.
+- Finishing a level shows "¡NIVEL 2!" and loads the next one with fresh lives
+- Finishing the last level wins the whole game
+
+**Question for Gio:** "box" was built as **boxing** (punching). If you meant **boxes**
+(cajas) we can change it.
+
+---
+
 ## [0.1.0] - 2026-08-31
 
 ### Added - First playable lava run / Primera corrida de lava 🌋
