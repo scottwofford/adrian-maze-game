@@ -16,6 +16,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-08-31
+
+### Added - Cinco trampas de roca / Five rock traps 🪨
+
+Gabriel: *"Cinco trampas de roca en la de Gabriel."*
+
+- Five rocks floating in space, drifting slowly up and down
+- You cannot cut them with the lightsaber; touching one costs a life
+- Their hit areas follow the drift, so what you see is what you hit
+
+**Question for Gabriel:** in Adrian's game the rock traps take 5 lives. Here they take 1,
+because you only have 5 lives and one touch would end the game.
+
+---
+
 ## [0.2.0] - 2026-08-31
 
 ### Added - Los paquetes / The packages 📦

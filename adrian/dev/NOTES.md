@@ -52,6 +52,25 @@ so one trap could cost 3 lives. That broke Adrian's rule ("las trampas te quitan
 The player is now pushed out of the lava on the hit, so one trap costs exactly one life.
 Verified by sitting in the lava for 3 seconds: 10 lives to 9.
 
+### Rock trap / Trampa de roca (2026-08-31)
+
+> "Una trampa de roca en la mía... las trampas de roca son unas que te quitan cinco vidas
+> para el maze game. Y son para el tercer nivel." - Adrian
+
+- One rock trap, costs 5 lives, labeled "-5 ❤️" on screen.
+- **Open question for Adrian:** Level 3 starts with only 3 lives, so a 5-life rock trap
+  there is an instant loss. Is that what he wants (a super trap), or should Level 3 have
+  more lives? The trap is in the playable level for now.
+
+**Bugs found while testing this:**
+- The push-out only moved the sprite, not the physics body, so the player slid back in.
+  Now uses `body.reset()`.
+- The push could land the player on the neighbouring trap: rock pushed into lava, lava
+  pushed back into rock, 11 lives gone in 3 seconds. `pushClearOf()` now searches outward
+  for a spot with no trap under it, and one hit makes the player safe from every trap for
+  1.5s (the per-trap timers let traps chain).
+- Lives could go negative and `'❤️'.repeat(-1)` crashed the counter.
+
 ### Next: el mago / the wizard
 
 > "Después de las trampas quiero añadir un mago." - Adrian, 2026-08-31

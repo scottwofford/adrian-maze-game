@@ -40,6 +40,7 @@ let player2;
 let platforms;
 let lavaTraps;
 let waterTraps;
+let rockTraps;
 let cursors;
 let wasd;
 let player1Lives = STARTING_LIVES;
@@ -53,19 +54,22 @@ let scene; // Reference to scene for use in functions
 // Constants
 // Adrian's rule: "las trampas te quitan una vida" - a trap costs ONE life
 const TRAP_LIFE_COST = 1;
-const DAMAGE_COOLDOWN = 1000; // 1 second between hits, so one trap = one life
+
+// Adrian's rule (2026-08-31): "las trampas de roca son unas que te quitan cinco vidas...
+// y son para el tercer nivel." One rock trap, and it costs FIVE lives.
+const ROCK_TRAP_LIFE_COST = 5;
+const ROCK_TRAP_LEVEL = 3;   // where Adrian wants it. Level 3 is not built yet, so for now
+                             // the one rock trap lives in the level we can actually play.
+const DAMAGE_COOLDOWN = 1500; // after any trap, every trap leaves you alone this long
 
 // Where each player starts, so the water can send them back there
 const P1_START = { x: 100, y: 450 };
 const P2_START = { x: 150, y: 450 };
 
-// Damage cooldown tracking
+// One timer per player: after any trap hits you, every trap leaves you alone
+// for DAMAGE_COOLDOWN. Separate timers let traps chain into each other.
 let player1LastDamage = 0;
 let player2LastDamage = 0;
-
-// Water cooldown tracking (separate from lava)
-let player1LastWater = 0;
-let player2LastWater = 0;
 
 function preload() {
     // This function will load assets (images, sounds, etc.)
@@ -136,6 +140,12 @@ function create() {
     createWaterTrap(this, 330, 320, 50, 20);  // middle platform
     createWaterTrap(this, 710, 400, 50, 20);  // right platform
 
+    // ============================================
+    // 🪨 ROCK TRAP - just ONE, and it takes FIVE lives
+    // ============================================
+    rockTraps = this.physics.add.staticGroup();
+    createRockTrap(this, 560, 238, 54, 24);   // high platform, right before the exit
+
     // Player 1 (Dinosaur 🦖)
     player1 = this.add.text(100, 450, '🦖', {
         fontSize: '60px'
@@ -186,6 +196,10 @@ function create() {
     // Water sends you back to where you started
     this.physics.add.overlap(player1, waterTraps, hitWater, null, this);
     this.physics.add.overlap(player2, waterTraps, hitWater, null, this);
+
+    // The rock takes five lives at once
+    this.physics.add.overlap(player1, rockTraps, hitRock, null, this);
+    this.physics.add.overlap(player2, rockTraps, hitRock, null, this);
 
     // Controls
     cursors = this.input.keyboard.createCursorKeys();
@@ -246,7 +260,8 @@ function update() {
 
 // Lives label shown on screen / El texto de las vidas
 function livesLabel(lives) {
-    return `Lives / Vidas: ${lives} ${'❤️'.repeat(lives)}`;
+    const safe = Math.max(lives, 0);
+    return `Lives / Vidas: ${safe} ${'❤️'.repeat(safe)}`;
 }
 
 // Create a lava trap at specified position
@@ -292,6 +307,82 @@ function createWaterTrap(scene, x, y, width, height) {
     return water;
 }
 
+// Create the rock trap / Crear la trampa de roca
+function createRockTrap(scene, x, y, width, height) {
+    const rock = scene.add.rectangle(x, y, width, height, 0x757575); // Grey rock
+    rockTraps.add(rock);
+
+    scene.add.text(x, y - 20, '🪨', {
+        fontSize: '20px'
+    }).setOrigin(0.5);
+
+    // A warning label, because five lives is a lot to lose
+    scene.add.text(x, y + 22, '-5 ❤️', {
+        fontSize: '13px',
+        fill: '#ff8a80',
+        fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    return rock;
+}
+
+// Player touched the rock trap - lose FIVE lives! / ¡Pierdes cinco vidas!
+function hitRock(player, rock) {
+    if (gameOver) return;
+
+    const now = Date.now();
+    const isPlayer1 = (player === player1);
+
+    if (isPlayer1) {
+        if (now - player1LastDamage < DAMAGE_COOLDOWN) return;
+        player1LastDamage = now;
+    } else {
+        if (now - player2LastDamage < DAMAGE_COOLDOWN) return;
+        player2LastDamage = now;
+    }
+
+    const playerName = isPlayer1 ? '🦖 Player 1' : '🤖 Player 2';
+
+    if (isPlayer1) {
+        player1Lives = Math.max(player1Lives - ROCK_TRAP_LIFE_COST, 0);
+        p1LivesText.setText(livesLabel(player1Lives));
+    } else {
+        player2Lives = Math.max(player2Lives - ROCK_TRAP_LIFE_COST, 0);
+        p2LivesText.setText(livesLabel(player2Lives));
+    }
+
+    const livesLeft = isPlayer1 ? player1Lives : player2Lives;
+    console.log(`🪨 ${playerName} hit the ROCK TRAP! -${ROCK_TRAP_LIFE_COST} lives (${livesLeft} left)`);
+
+    showRockMessage(playerName);
+
+    if (livesLeft <= 0) {
+        endGame(isPlayer1 ? '🤖 Player 2' : '🦖 Player 1');
+        return;
+    }
+
+    // Push them clear of the rock, same as the lava
+    pushClearOf(player, rock);
+}
+
+// Flash a big warning when the rock takes five lives
+function showRockMessage(playerName) {
+    const message = scene.add.text(400, 480, `🪨 ${playerName}: -5 ❤️ ¡La roca te quitó CINCO vidas!`, {
+        fontSize: '20px',
+        fill: '#ff8a80',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 4
+    }).setOrigin(0.5);
+
+    scene.tweens.add({
+        targets: message,
+        alpha: 0,
+        duration: 1800,
+        onComplete: () => message.destroy()
+    });
+}
+
 // Player touched water - go back to the start! / ¡Te regresa al principio!
 function hitWater(player, water) {
     if (gameOver) return;
@@ -299,13 +390,13 @@ function hitWater(player, water) {
     const now = Date.now();
     const isPlayer1 = (player === player1);
 
-    // Cooldown so the water only sends you back once per splash
+    // Same shared cooldown as the other traps
     if (isPlayer1) {
-        if (now - player1LastWater < DAMAGE_COOLDOWN) return;
-        player1LastWater = now;
+        if (now - player1LastDamage < DAMAGE_COOLDOWN) return;
+        player1LastDamage = now;
     } else {
-        if (now - player2LastWater < DAMAGE_COOLDOWN) return;
-        player2LastWater = now;
+        if (now - player2LastDamage < DAMAGE_COOLDOWN) return;
+        player2LastDamage = now;
     }
 
     const playerName = isPlayer1 ? '🦖 Player 1' : '🤖 Player 2';
@@ -378,10 +469,7 @@ function hitLava(player, lava) {
 
     // Push the player right out of the lava, so one trap only ever costs one life
     // (Adrian's rule: "las trampas te quitan una vida" - ONE life, not three)
-    const pushLeft = player.x < lava.x;
-    player.x = pushLeft ? lava.x - lava.width / 2 - 40 : lava.x + lava.width / 2 + 40;
-    player.body.setVelocityY(-200);
-    player.body.setVelocityX(pushLeft ? -80 : 80);
+    pushClearOf(player, lava);
 
     // Flash player to show they got hurt
     scene.tweens.add({
@@ -391,6 +479,38 @@ function hitLava(player, lava) {
         yoyo: true,
         repeat: 3
     });
+}
+
+// Move a player clear of a trap, to a spot that is not sitting on ANOTHER trap.
+// Without this the player bounced rock -> lava -> rock and lost every life at once.
+function pushClearOf(player, trap) {
+    const goLeft = player.x < trap.x;
+    const y = trap.y - 60;
+
+    // Try further and further away until we find a spot with no trap under it
+    for (const distance of [70, 120, 170, 220]) {
+        const x = goLeft
+            ? trap.x - trap.width / 2 - distance
+            : trap.x + trap.width / 2 + distance;
+        if (x < 30 || x > 770) continue;
+        if (isSpotClear(x, y)) {
+            player.body.reset(x, y);
+            player.body.setVelocityY(-150);
+            return;
+        }
+    }
+
+    // Nowhere safe nearby: go back to the start
+    const start = (player === player1) ? P1_START : P2_START;
+    player.body.reset(start.x, start.y);
+}
+
+// Is there any trap sitting at this spot?
+function isSpotClear(x, y) {
+    const groups = [lavaTraps, waterTraps, rockTraps];
+    return groups.every(group => group.getChildren().every(trap =>
+        Math.abs(trap.x - x) > trap.width / 2 + 34 || Math.abs(trap.y - y) > 90
+    ));
 }
 
 // Flash a message when a trap takes a life
