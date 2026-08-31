@@ -73,10 +73,12 @@ gio/
 ## 🚀 Cómo Jugar / How to Play
 
 **English:** Arrow keys to move and jump. Get across the lava to the flag 🏁. Lava burns you
-and the cracks drop you. Gio decides everything else.
+and the cracks drop you. There are 3 levels: level 2 is harder, and level 3 has **boxing** -
+press SPACE to punch the boxers 🥊. Gio decides everything else.
 
 **Español:** Flechas para moverte y saltar. Cruza la lava hasta la bandera 🏁. La lava te
-quema y las grietas te tiran. Gio decide todo lo demás.
+quema y las grietas te tiran. Hay 3 niveles: el 2 es más difícil y el 3 tiene **boxeo**:
+aprieta ESPACIO para dar puñetazos a los boxeadores 🥊. Gio decide todo lo demás.
 
 ---
 
