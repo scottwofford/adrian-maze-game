@@ -39,6 +39,19 @@ Current session: Prototype development
   🪵 leña, 🏖️ arena.
 - Open question for Adrian: what are the not-lava traps, and what do they do?
 
+### Water traps / Trampas de agua (2026-08-31)
+
+> "Trampas de lava. Te quitan una vida. ... Trampas de agua, te devuelven al empezar." - Adrian
+
+- 3 water traps 💧, spread across the board (bottom left, middle platform, right platform).
+- Water does NOT take a life. It sends that player back to where they started.
+- Each player goes back to their own start: Player 1 to (100, 450), Player 2 to (150, 450).
+
+**Bug found and fixed while testing:** standing still in the lava took a life every second,
+so one trap could cost 3 lives. That broke Adrian's rule ("las trampas te quitan una vida").
+The player is now pushed out of the lava on the hit, so one trap costs exactly one life.
+Verified by sitting in the lava for 3 seconds: 10 lives to 9.
+
 ### Next: el mago / the wizard
 
 > "Después de las trampas quiero añadir un mago." - Adrian, 2026-08-31

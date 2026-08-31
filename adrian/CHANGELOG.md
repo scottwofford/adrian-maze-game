@@ -19,6 +19,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-08-31
+
+### Added - Water traps / Trampas de agua 💧
+
+Adrian's rule: *"Trampas de agua, te devuelven al empezar."*
+
+- 3 water traps spread across the board, marked with 💧
+- Water sends that player back to their own starting spot; it does NOT take a life
+- Message on screen: "¡Al principio otra vez! / Back to the start!"
+
+### Fixed
+- Standing still in the lava took a life every second (one trap could cost 3 lives). The
+  player is now pushed out of the lava, so one trap costs exactly one life, which is what
+  Adrian said it should do.
+
+---
+
 ## [0.2.0] - 2026-08-31
 
 ### Added - Traps take a life! / ¡Las trampas te quitan una vida! 🔥❤️
