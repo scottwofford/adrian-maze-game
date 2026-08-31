@@ -111,11 +111,12 @@ From feedback session 2026-01-01, the team (Adrian, Gabriel, Zoe, Victoria) deci
 ### Acceptance Criteria (Tentative - depends on answers):
 
 #### Minimum Viable Trap System:
-- [ ] At least 2 types of pre-existing traps (e.g., lava floor, spike pit)
-- [ ] Traps spawn randomly in maze
-- [ ] Stepping on trap deals damage (20 HP?)
-- [ ] Visual feedback (animation, effect)
-- [ ] Death if health reaches 0
+- [x] Lava traps live in the maze (7 of them in Level 1, all visible) - 2026-08-31
+- [ ] Traps spawn randomly in maze (hand-placed for now)
+- [x] Stepping on a trap costs 1 life (Adrian's rule, replaces the HP damage idea) - 2026-08-31
+- [x] Visual feedback (bubbling lava, player flash, "¡Perdiste una vida!" message) - 2026-08-31
+- [x] Game over when a player runs out of lives - 2026-08-31
+- [x] Starting lives by level: 10 / 5 / 3 / 1 - 2026-08-31
 
 #### Stretch Goals (if time permits):
 - [ ] Player-built trap (simplest type)

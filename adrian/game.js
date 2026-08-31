@@ -1,6 +1,7 @@
 // Adrian's Maze Game - Level 1
 // Created by: Adrian (6 years old)
 // Date: January 1, 2026
+// Updated: August 31, 2026 - Traps take a life! / ¡Las trampas te quitan una vida!
 
 // Game Configuration
 const config = {
@@ -24,28 +25,34 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+// ============================================
+// ❤️ LIVES - Adrian's rule (2026-08-31)
+// "Con 10 vidas en el primer nivel, con 5 vidas en el segundo nivel,
+//  con tres en el tercer nivel y con una en el cuarto nivel."
+// ============================================
+const LIVES_BY_LEVEL = [10, 5, 3, 1]; // Level 1, 2, 3, 4
+const CURRENT_LEVEL = 1;               // Only Level 1 is built so far
+const STARTING_LIVES = LIVES_BY_LEVEL[CURRENT_LEVEL - 1];
+
 // Game Variables
 let player1;
 let player2;
 let platforms;
 let lavaTraps;
-let superTrap;
 let cursors;
 let wasd;
-let scoreText;
-let player1Health = 50;
-let player2Health = 50;
-let player1Lives = 3;
-let player2Lives = 3;
-let p1HealthText;
-let p2HealthText;
+let player1Lives = STARTING_LIVES;
+let player2Lives = STARTING_LIVES;
+let p1LivesText;
+let p2LivesText;
 let gameOver = false;
 let winnerText;
 let scene; // Reference to scene for use in functions
 
 // Constants
-const LAVA_DAMAGE = 20; // Points lost when touching lava
-const DAMAGE_COOLDOWN = 1000; // 1 second between damage
+// Adrian's rule: "las trampas te quitan una vida" - a trap costs ONE life
+const TRAP_LIFE_COST = 1;
+const DAMAGE_COOLDOWN = 1000; // 1 second between hits, so one trap = one life
 
 // Damage cooldown tracking
 let player1LastDamage = 0;
@@ -61,6 +68,9 @@ function create() {
     // Background
     this.add.rectangle(400, 300, 800, 600, 0x2d3436);
 
+    // Store scene reference (helpers use it)
+    scene = this;
+
     // Title
     this.add.text(400, 30, 'ADRIAN\'S MAZE GAME', {
         fontSize: '32px',
@@ -69,7 +79,7 @@ function create() {
     }).setOrigin(0.5);
 
     // Subtitle
-    this.add.text(400, 65, 'Level 1: Race to the Exit!', {
+    this.add.text(400, 65, `Level ${CURRENT_LEVEL}: Race to the Exit! / ¡Corre a la salida!`, {
         fontSize: '18px',
         fill: '#00ff00'
     }).setOrigin(0.5);
@@ -88,16 +98,24 @@ function create() {
     platforms.create(200, 180, null).setDisplaySize(150, 20).setTint(0x8B4513).refreshBody();
 
     // Exit (goal)
-    const exit = this.add.rectangle(750, 140, 40, 40, 0x00ff00);
+    this.add.rectangle(750, 140, 40, 40, 0x00ff00);
     this.add.text(750, 140, '🚪', {
         fontSize: '32px'
     }).setOrigin(0.5);
 
     // ============================================
-    // 🔥 TRAPS - DISABLED FOR NOW
+    // 🔥 TRAPS - every trap costs one life
+    // Adrian's rule: you can always SEE the traps ("puedes ver todas las trampas")
     // ============================================
-    // TODO: Re-enable when ready to test traps
     lavaTraps = this.physics.add.staticGroup();
+
+    createLavaTrap(this, 380, 550, 60, 20);  // on the ground
+    createLavaTrap(this, 620, 550, 60, 20);  // on the ground
+    createLavaTrap(this, 280, 480, 50, 20);  // low platform
+    createLavaTrap(this, 520, 400, 50, 20);  // right platform
+    createLavaTrap(this, 700, 400, 50, 20);  // right platform
+    createLavaTrap(this, 330, 320, 50, 20);  // middle platform
+    createLavaTrap(this, 600, 240, 50, 20);  // high platform
 
     // Player 1 (Dinosaur 🦖)
     player1 = this.add.text(100, 450, '🦖', {
@@ -121,45 +139,30 @@ function create() {
     this.physics.add.collider(player1, platforms);
     this.physics.add.collider(player2, platforms);
 
-    // Health Display
+    // Lives Display / Marcador de vidas
     this.add.text(20, 100, 'Player 1 (🦖)', {
         fontSize: '16px',
         fill: '#ff0000'
     });
 
-    p1HealthText = this.add.text(20, 125, `Health: ${player1Health} HP`, {
+    p1LivesText = this.add.text(20, 125, livesLabel(player1Lives), {
         fontSize: '14px',
         fill: '#fff'
     });
 
-    this.add.text(20, 145, `Lives: ${'❤️'.repeat(player1Lives)}`, {
-        fontSize: '14px',
-        fill: '#fff'
-    });
-
-    this.add.text(20, 180, 'Player 2 (🤖)', {
+    this.add.text(20, 170, 'Player 2 (🤖)', {
         fontSize: '16px',
         fill: '#0000ff'
     });
 
-    p2HealthText = this.add.text(20, 205, `Health: ${player2Health} HP`, {
+    p2LivesText = this.add.text(20, 195, livesLabel(player2Lives), {
         fontSize: '14px',
         fill: '#fff'
     });
 
-    this.add.text(20, 225, `Lives: ${'❤️'.repeat(player2Lives)}`, {
-        fontSize: '14px',
-        fill: '#fff'
-    });
-
-    // Store scene reference
-    scene = this;
-
-    // TRAP COLLISIONS - DISABLED FOR NOW
-    // this.physics.add.overlap(player1, lavaTraps, hitLava, null, this);
-    // this.physics.add.overlap(player2, lavaTraps, hitLava, null, this);
-    // this.physics.add.overlap(player1, superTrap, hitSuperTrap, null, this);
-    // this.physics.add.overlap(player2, superTrap, hitSuperTrap, null, this);
+    // Trap collisions - stepping in lava costs a life
+    this.physics.add.overlap(player1, lavaTraps, hitLava, null, this);
+    this.physics.add.overlap(player2, lavaTraps, hitLava, null, this);
 
     // Controls
     cursors = this.input.keyboard.createCursorKeys();
@@ -171,6 +174,7 @@ function create() {
     });
 
     console.log('✅ Game created! Player 1: Arrow Keys | Player 2: WASD');
+    console.log(`❤️ Level ${CURRENT_LEVEL}: everybody starts with ${STARTING_LIVES} lives`);
 }
 
 function update() {
@@ -217,13 +221,17 @@ function update() {
 // 🔥 HELPER FUNCTIONS
 // ============================================
 
+// Lives label shown on screen / El texto de las vidas
+function livesLabel(lives) {
+    return `Lives / Vidas: ${lives} ${'❤️'.repeat(lives)}`;
+}
+
 // Create a lava trap at specified position
 function createLavaTrap(scene, x, y, width, height) {
     const lava = scene.add.rectangle(x, y, width, height, 0xff4500); // Orange-red lava
-    scene.physics.add.existing(lava, true); // Static body
-    lavaTraps.add(lava);
+    lavaTraps.add(lava); // Static group gives it a static body sized to the rectangle
 
-    // Add bubbling effect
+    // Add bubbling effect (visual only - the body stays the same size)
     scene.tweens.add({
         targets: lava,
         scaleY: 1.1,
@@ -233,21 +241,21 @@ function createLavaTrap(scene, x, y, width, height) {
     });
 
     // Add lava emoji label
-    scene.add.text(x, y - 15, '🔥', {
-        fontSize: '14px'
+    scene.add.text(x, y - 18, '🔥', {
+        fontSize: '18px'
     }).setOrigin(0.5);
 
     return lava;
 }
 
-// Player touched lava - lose health!
+// Player touched lava - lose ONE life! / ¡Pierdes una vida!
 function hitLava(player, lava) {
     if (gameOver) return;
 
     const now = Date.now();
     const isPlayer1 = (player === player1);
 
-    // Check cooldown - don't take damage too fast
+    // Check cooldown - one trap should only cost one life
     if (isPlayer1) {
         if (now - player1LastDamage < DAMAGE_COOLDOWN) return;
         player1LastDamage = now;
@@ -258,34 +266,31 @@ function hitLava(player, lava) {
 
     const playerName = isPlayer1 ? '🦖 Player 1' : '🤖 Player 2';
 
-    // Apply damage
+    // Take one life away
     if (isPlayer1) {
-        player1Health -= LAVA_DAMAGE;
-        p1HealthText.setText(`Health: ${player1Health} HP`);
-        console.log(`🔥 ${playerName} touched lava! -${LAVA_DAMAGE} HP (${player1Health} remaining)`);
-
-        // Check for death
-        if (player1Health <= 0) {
-            endGame('🤖 Player 2');
-            return;
-        }
+        player1Lives -= TRAP_LIFE_COST;
+        p1LivesText.setText(livesLabel(player1Lives));
     } else {
-        player2Health -= LAVA_DAMAGE;
-        p2HealthText.setText(`Health: ${player2Health} HP`);
-        console.log(`🔥 ${playerName} touched lava! -${LAVA_DAMAGE} HP (${player2Health} remaining)`);
+        player2Lives -= TRAP_LIFE_COST;
+        p2LivesText.setText(livesLabel(player2Lives));
+    }
 
-        // Check for death
-        if (player2Health <= 0) {
-            endGame('🦖 Player 1');
-            return;
-        }
+    const livesLeft = isPlayer1 ? player1Lives : player2Lives;
+    console.log(`🔥 ${playerName} fell in a trap! -${TRAP_LIFE_COST} life (${livesLeft} left)`);
+
+    showTrapMessage(playerName);
+
+    // Out of lives = the other player wins
+    if (livesLeft <= 0) {
+        endGame(isPlayer1 ? '🤖 Player 2' : '🦖 Player 1');
+        return;
     }
 
     // Knock player back (so they don't keep taking damage)
     player.body.setVelocityY(-200);
     player.body.setVelocityX(player.body.velocity.x > 0 ? -100 : 100);
 
-    // Flash player red to show damage
+    // Flash player to show they got hurt
     scene.tweens.add({
         targets: player,
         alpha: 0.3,
@@ -295,31 +300,32 @@ function hitLava(player, lava) {
     });
 }
 
-// Player touched SUPER TRAP - INSTANT LOSS!
-function hitSuperTrap(player, trap) {
-    if (gameOver) return;
+// Flash a message when a trap takes a life
+function showTrapMessage(playerName) {
+    const message = scene.add.text(400, 520, `🔥 ${playerName}: -1 ❤️ ¡Perdiste una vida!`, {
+        fontSize: '20px',
+        fill: '#ffdd00',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 4
+    }).setOrigin(0.5);
 
-    const isPlayer1 = (player === player1);
-    const loserName = isPlayer1 ? '🦖 Player 1' : '🤖 Player 2';
-    const winnerName = isPlayer1 ? '🤖 Player 2' : '🦖 Player 1';
-
-    console.log(`☠️ ${loserName} fell into the SUPER TRAP!`);
-    console.log(`🏆 ${winnerName} WINS!`);
-
-    // Freeze the losing player in the trap
-    player.body.setVelocity(0, 0);
-    player.body.setImmovable(true);
-
-    endGame(winnerName);
+    scene.tweens.add({
+        targets: message,
+        alpha: 0,
+        duration: 1200,
+        onComplete: () => message.destroy()
+    });
 }
 
 // End the game with a winner
 function endGame(winner) {
+    if (gameOver) return;
     gameOver = true;
 
     // Display winner
-    winnerText = scene.add.text(400, 300, `${winner} WINS!`, {
-        fontSize: '48px',
+    winnerText = scene.add.text(400, 300, `${winner} WINS! ¡GANA!`, {
+        fontSize: '44px',
         fill: '#ffff00',
         fontStyle: 'bold',
         stroke: '#000000',
@@ -327,7 +333,7 @@ function endGame(winner) {
     }).setOrigin(0.5);
 
     // Add "Play Again" instruction
-    scene.add.text(400, 360, 'Refresh page to play again!', {
+    scene.add.text(400, 360, 'Refresh page to play again! / ¡Recarga la página!', {
         fontSize: '20px',
         fill: '#ffffff'
     }).setOrigin(0.5);
@@ -337,5 +343,5 @@ function endGame(winner) {
 
 console.log('🎮 Adrian\'s Maze Game Loaded!');
 console.log('👾 Created by Adrian (6 years old)');
-console.log('🔥 Phase 2: Traps are now active!');
+console.log('🔥 Traps are ON - each trap costs one life!');
 console.log('🚀 Ready to play!');

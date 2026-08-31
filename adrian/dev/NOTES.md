@@ -4,6 +4,42 @@ Current session: Prototype development
 
 ---
 
+## Session: 2026-08-31 - Trap and lives decisions
+
+### Adrian's words / Las palabras de Adrian
+
+> "¿Trampas como? Necesitamos generar trampas. Si no, ¿para qué van a funcionar las vidas? Ya. Pero ¿cómo van a ser las trampas? ¿Cuántas y cómo? ¿Qué pasa cuando estás en las trampas? Así que las trampas te quitan una vida. Empezamos con tres vidas en el primer.. Empezamos con cinco vidas. Con 10 vidas en el primer nivel, con 5 vidas en el segundo nivel, con tres en el tercer nivel y con una en el El cuarto nivel."
+
+### Decisions captured / Decisiones registradas
+
+- Traps are needed so the lives system has a purpose.
+- Falling into a trap removes one life.
+- Starting lives by level: 10 in Level 1, 5 in Level 2, 3 in Level 3, and 1 in Level 4.
+- Trap appearance, number, and behavior still need Adrian's design decisions.
+
+### Built on 2026-08-31 / Construido el 2026-08-31
+
+- `LIVES_BY_LEVEL = [10, 5, 3, 1]` in `game.js`; Level 1 uses 10 lives for both players.
+- Lava traps are switched ON. Every trap costs exactly one life (1 second cooldown so one
+  trap cannot eat two lives).
+- Seven traps in Level 1, all visible with a 🔥 label (Adrian's rule: "puedes ver todas las trampas").
+- Losing your last life ends the game and the other player wins.
+- The old 50 HP health bar is gone: lives are now the only way to get hurt. Health can come
+  back with weapons in Phase 4 if Adrian wants it.
+- Levels 2, 3, and 4 are not built yet, but their lives (5, 3, 1) are already in the code.
+
+### Next: el mago / the wizard
+
+> "Después de las trampas quiero añadir un mago." - Adrian, 2026-08-31
+
+Questions for Adrian before we build him / Preguntas para Adrian:
+- ¿El mago es un jugador, un enemigo, o un ayudante?
+- ¿Qué hace su magia? (¿te quita vidas, te da vidas, te mueve, hace trampas?)
+- ¿Dónde vive en el laberinto? ¿Se mueve o se queda quieto?
+- ¿Cómo se ve? 🧙 🧙‍♂️ 🧙‍♀️
+
+---
+
 ## Session: 2026-01-01 - Initial Prototype Build
 
 ### Context

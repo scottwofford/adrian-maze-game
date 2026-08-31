@@ -8,6 +8,17 @@ Last updated: 2026-01-01
 
 ## 🎮 Core Gameplay Features
 
+### 🧙 EL MAGO / THE WIZARD ⭐⭐⭐ (NEXT - Adrian, 2026-08-31)
+
+> "Después de las trampas quiero añadir un mago." - Adrian
+
+- [ ] Decide with Adrian: is the wizard a player, an enemy, or a helper?
+- [ ] Decide what his magic does (take lives? give lives? move you? build traps?)
+- [ ] Decide where he lives in the maze and whether he moves
+- [ ] Pick his emoji 🧙 🧙‍♂️ 🧙‍♀️
+- [ ] Build him
+
+
 ### 🕳️ TRAP SYSTEM ⭐⭐⭐ (PHASE 2 - TOP PRIORITY!)
 
 > **Adrian's Vision:** "Trampas que nadie hizo, trampas que hacen los jugadores y todo eso"
