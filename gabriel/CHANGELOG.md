@@ -16,6 +16,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-08-31
+
+### Added - Los paquetes / The packages 📦
+
+Gabriel's words: *"Y los paquetes, por favor, que mandan muchos paquetes por la nave espacial."*
+
+- The bad guys 👾 now throw packages 📦 straight at your ship
+- Cut a package with the lightsaber and it counts on the "Paquetes cortados" counter
+- A package that reaches your ship costs a life
+
+### Fixed - Los malos no se movían / The bad guys never moved
+
+- Bad guys and aliens were spawned off-screen with their speed set **before** they were
+  added to their group, and joining the group wiped the speed. They sat still at x=830,
+  off the right edge, which is why Gabriel could never see them. Speed is now set after
+  the add, so they fly in.
+- The lightsaber never actually cut anything during real play (its physics body was not
+  where the blade was drawn). Saber hits are now a plain distance check every frame.
+
+### Changed - Más justo / Fairer
+- 5 lives instead of 3, and 2 seconds of being safe after a hit
+- Fewer aliens and slower packages
+- When you lose a life, the enemies near your ship are cleared so you do not lose every
+  life at once
+- Win at 10 bad guys instead of 15
+
+---
+
 ## [0.1.0] - 2026-08-31
 
 ### Added - Spaceship + lightsaber / Nave espacial y sable láser ⚔️🚀
