@@ -8,12 +8,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+- 🧙 Wizard / el mago (Adrian's next idea, 2026-08-31)
+- Player-built traps (dig + choose material)
+- Levels 2, 3, and 4 (lives already defined: 5, 3, 1)
 - Combat system (bow/arrow, lightsaber)
 - Superpower selection
-- Trap system
 - Random maze generation
 - Monster selection screen
 - Sound effects and music
+
+---
+
+## [0.2.0] - 2026-08-31
+
+### Added - Traps take a life! / ¡Las trampas te quitan una vida! 🔥❤️
+
+Adrian's design call: *"Así que las trampas te quitan una vida. Con 10 vidas en el primer
+nivel, con 5 vidas en el segundo nivel, con tres en el tercer nivel y con una en el cuarto nivel."*
+
+- Lava traps turned ON: 7 visible traps across Level 1, each labeled with 🔥
+- Falling in a trap costs exactly 1 life (1 second cooldown between hits)
+- Starting lives per level: 10 (Level 1), 5 (Level 2), 3 (Level 3), 1 (Level 4)
+- Live lives counter for both players, in English and Spanish
+- Flash message when a trap takes a life: "¡Perdiste una vida!"
+- Running out of lives ends the game and the other player wins
+
+### Changed
+- Health (50 HP) removed; lives are now the way you get hurt, so the lives counter means
+  something (Adrian: *"Si no, ¿para qué van a funcionar las vidas?"*)
 
 ---
 
