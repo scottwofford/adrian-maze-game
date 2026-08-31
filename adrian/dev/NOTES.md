@@ -28,6 +28,17 @@ Current session: Prototype development
   back with weapons in Phase 4 if Adrian wants it.
 - Levels 2, 3, and 4 are not built yet, but their lives (5, 3, 1) are already in the code.
 
+### Trap tuning / Ajuste de trampas (2026-08-31, later)
+
+> "Como en por todo el tablero... pero no pongas demasiado, como solo cuatro o algo asi,
+> cuatro trampas de lava. Son trampas de lava? Algunas. Algunas no y algunas..." - Adrian
+
+- Went from 7 lava traps down to **4**, spread across the whole board (bottom, left, right, top).
+- Adrian says only SOME traps are lava. The other trap types are still undecided; he was
+  thinking out loud ("a ver"). His material list from Phase 2 planning: 🔥 fuego, 💧 agua,
+  🪵 leña, 🏖️ arena.
+- Open question for Adrian: what are the not-lava traps, and what do they do?
+
 ### Next: el mago / the wizard
 
 > "Después de las trampas quiero añadir un mago." - Adrian, 2026-08-31

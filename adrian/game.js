@@ -109,13 +109,12 @@ function create() {
     // ============================================
     lavaTraps = this.physics.add.staticGroup();
 
-    createLavaTrap(this, 380, 550, 60, 20);  // on the ground
-    createLavaTrap(this, 620, 550, 60, 20);  // on the ground
-    createLavaTrap(this, 280, 480, 50, 20);  // low platform
-    createLavaTrap(this, 520, 400, 50, 20);  // right platform
-    createLavaTrap(this, 700, 400, 50, 20);  // right platform
-    createLavaTrap(this, 330, 320, 50, 20);  // middle platform
-    createLavaTrap(this, 600, 240, 50, 20);  // high platform
+    // Adrian (2026-08-31): "no pongas demasiado, como solo cuatro" and
+    // "por todo el tablero" - four lava traps, spread across the whole board.
+    createLavaTrap(this, 450, 550, 60, 20);  // bottom - on the ground
+    createLavaTrap(this, 280, 480, 50, 20);  // left - low platform
+    createLavaTrap(this, 600, 400, 50, 20);  // right - middle platform
+    createLavaTrap(this, 650, 240, 50, 20);  // top - high platform near the exit
 
     // Player 1 (Dinosaur 🦖)
     player1 = this.add.text(100, 450, '🦖', {
