@@ -26,6 +26,26 @@ Adrian prompting questions were stripped.
   the bad guys, move in wavy paths, and the saber does NOT stop them. Dodging is the only
   option, exactly as Gabriel said.
 
+### Packages + the bug Gabriel caught (2026-08-31, later)
+
+> "Falta los malos para el juego de Gabriel. Puedes añadirlos por favor. Y los paquetes, por
+> favor, que mandan muchos paquetes por el nave espacial. El campeón sabe la misma nave."
+
+Gabriel was right: **the bad guys were never visible.** They spawned at x=830 with their
+velocity set before `badGuys.add(bad)`, and adding a game object to an arcade Group
+re-enables its body and wipes the velocity. They sat frozen off the right edge forever.
+Same bug in the aliens. Velocity is now set after the add.
+
+A second bug came out of testing that: the lightsaber destroyed nothing in real play,
+because the saber's physics body did not stay where the blade was drawn. Replaced with a
+distance check in `checkSaberHits()`.
+
+**Packages:** the bad guys now throw 📦 at the ship. The saber cuts them (own counter); a
+package that lands costs a life.
+
+**Still to ask Gabriel:** "El campeón sabe la misma nave" was not clear enough to build.
+Is the champion a boss who flies the same ship as you?
+
 ### Uncertain in the recording / Dudas de la grabación
 
 - **"Me encantó Dios Walker"** was transcribed that way; almost certainly **Skywalker**.
