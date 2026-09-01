@@ -19,6 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-09-01
+
+### Added - Nivel 2 / Level 2 🎮
+
+- **Level 2** exists now, with **5 lives** each, exactly as Adrian said the levels should go
+  (10, 5, 3, 1).
+- It is harder: seven skinnier platforms, **five** lava traps instead of four, and the same
+  three water traps. No rock trap here; Adrian wants that one in Level 3.
+- Whoever reaches the door wins that level, then both players go on to the next one with
+  fresh lives. A scoreboard at the top keeps the tally: "Niveles ganados: 🦖 1 - 🤖 0".
+- Winning the last level wins the whole game.
+
+### Changed
+- The levels are now data (platforms, traps, exit, starting spots), so adding Level 3 and
+  Level 4 is a matter of adding to the list. Level 1 plays exactly as before.
+- Every game page now loads `game.js` with a fresh timestamp, so a normal reload always
+  shows the newest version instead of a cached copy.
+
+---
+
 ## [0.4.0] - 2026-08-31
 
 ### Added - La trampa de roca / The rock trap 🪨
